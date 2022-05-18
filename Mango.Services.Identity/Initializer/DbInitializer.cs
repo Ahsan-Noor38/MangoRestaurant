@@ -68,7 +68,7 @@ namespace Mango.Services.Identity.Initializer
                 new Claim(JwtClaimTypes.Name, customerUser.FirstName + " "+ customerUser.LastName),
                 new Claim(JwtClaimTypes.GivenName, customerUser.FirstName),
                 new Claim(JwtClaimTypes.FamilyName, customerUser.LastName),
-                new Claim(JwtClaimTypes.Role, SD.Admin),
+                new Claim(JwtClaimTypes.Role, SD.Customer),
             }).Result;
         }
     }

@@ -21,9 +21,9 @@ namespace Mango.Services.Identity
             new List<ApiScope>
             {
                 new ApiScope("mango", "Mango Server"),
-                new ApiScope(name: "read", displayName: "Read you data."),
-                new ApiScope(name: "write", displayName: "write you data."),
-                new ApiScope(name: "delete", displayName: "delete you data."),
+                new ApiScope(name: "read", displayName: "Read your data."),
+                new ApiScope(name: "write", displayName: "write your data."),
+                new ApiScope(name: "delete", displayName: "delete your data."),
             };
 
         public static IEnumerable<Client> Clients =>

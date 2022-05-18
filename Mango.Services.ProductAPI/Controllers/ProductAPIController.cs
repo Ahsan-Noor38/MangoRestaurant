@@ -89,8 +89,8 @@ namespace Mango.Services.ProductAPI.Controllers
             return _response;
         }
 
-        [Authorize(Roles ="Admin")]
         [HttpDelete]
+        [Authorize(Roles ="Admin")]
         [Route("{id}")]
         public async Task<object> Delete(int id)
         {
