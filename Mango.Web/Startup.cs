@@ -44,12 +44,21 @@ namespace Mango.Web
                     options.ClientId = "mango";
                     options.ClientSecret = "secret";
                     options.ResponseType = "code";
-
+                    
                     options.TokenValidationParameters.NameClaimType = "name";
                     options.TokenValidationParameters.RoleClaimType = "role";
                     options.Scope.Add("mango");
-                    options.SaveTokens = true;  
+                    options.SaveTokens = true;
                 });
+            services.AddAuthorization(a =>
+            {
+                a.AddPolicy("Admin", s =>
+                {
+                    s.RequireClaim("role", "Admin");
+                    s.RequireClaim("client_id", "mango");
+                    s.RequireAuthenticatedUser();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
