@@ -24,6 +24,32 @@ namespace Mango.Web.Controllers
             return View(await LoadCartDtoBasedOnLoggedInUser());
         }
 
+        public async Task<IActionResult> Remove(int cartDetailsId)
+        {
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _cartService.RemoveFromCartAsync<ResponseDTO>(cartDetailsId, accessToken);
+
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(CartIndex));
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> Reset()
+        {
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+            var response = await _cartService.ClearCartAsync<ResponseDTO>(userId, accessToken);
+
+            if (response != null && response.IsSuccess)
+            {
+                return RedirectToAction(nameof(CartIndex));
+            }
+            return View();
+        }
+
         private async Task<CartDTO> LoadCartDtoBasedOnLoggedInUser()
         {
             var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value;
@@ -34,15 +60,15 @@ namespace Mango.Web.Controllers
             if (response != null && response.IsSuccess)
             {
                 cartDTO = JsonConvert.DeserializeObject<CartDTO>(Convert.ToString(response.Result));
-            }
-
-            if (cartDTO.CartHeader != null)
-            {
-                foreach (var detail in cartDTO.CartDetails)
+                if (cartDTO?.CartHeader != null)
                 {
-                    cartDTO.CartHeader.OrderTotal += (detail.Product.Price * detail.Count);
+                    foreach (var detail in cartDTO.CartDetails)
+                    {
+                        cartDTO.CartHeader.OrderTotal += (detail.Product.Price * detail.Count);
+                    }
                 }
             }
+
             return cartDTO;
         }
     }

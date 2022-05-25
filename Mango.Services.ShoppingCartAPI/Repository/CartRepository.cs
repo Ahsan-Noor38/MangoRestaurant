@@ -90,8 +90,12 @@ namespace Mango.Services.ShoppingCartAPI.Repository
             {
                 CartHeader = await _dbContext.CartHeaders.FirstOrDefaultAsync(c => c.UserId == userId)
             };
-            cart.CartDetails = _dbContext.CartDetails.Where(d => d.CartHeaderId == cart.CartHeader.CartHeaderId).Include(d => d.Product);
-            return _mapper.Map<CartDTO>(cart);
+            if (cart.CartHeader != null)
+            {
+                cart.CartDetails = _dbContext.CartDetails.Where(d => d.CartHeaderId == cart.CartHeader.CartHeaderId).Include(d => d.Product);
+                return _mapper.Map<CartDTO>(cart);
+            }
+            return null;
         }
 
         public async Task<bool> RemoveFromCart(int cartDetailsId)
