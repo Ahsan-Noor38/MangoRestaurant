@@ -10,12 +10,12 @@ namespace Mango.Services.CouponAPI.Controllers
 {
     [Route("api/coupon")]
     [ApiController]
-    public class CouponController : ControllerBase
+    public class CouponAPIController : ControllerBase
     {
         private readonly ICouponRepository _couponRepository;
         protected ResponseDTO _response;
 
-        public CouponController(ICouponRepository couponRepository, ResponseDTO responseDTO)
+        public CouponAPIController(ICouponRepository couponRepository, ResponseDTO responseDTO)
         {
             _couponRepository = couponRepository;
             _response = responseDTO;
