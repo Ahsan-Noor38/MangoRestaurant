@@ -10,19 +10,19 @@ namespace Mango.Services.CouponAPI.Controllers
 {
     [Route("api/coupon")]
     [ApiController]
-    public class CouponAPIController : ControllerBase
+    public class CouponAPIController : Controller
     {
         private readonly ICouponRepository _couponRepository;
         protected ResponseDTO _response;
 
-        public CouponAPIController(ICouponRepository couponRepository, ResponseDTO responseDTO)
+        public CouponAPIController(ICouponRepository couponRepository)
         {
             _couponRepository = couponRepository;
-            _response = responseDTO;
+            _response = new ResponseDTO();
         }
 
         [HttpGet("{code}")]
-        public async Task<object> GetCart(string code)
+        public async Task<object> GetDiscountForCode(string code)
         {
             try
             {
