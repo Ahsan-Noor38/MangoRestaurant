@@ -37,6 +37,18 @@ namespace Mango.Web.Services
             return await this.SendAsync<T>(apiRequest);
         }
 
+        public async Task<T> Checkout<T>(CartHeaderDTO cartHeader, string token = null)
+        {
+            var apiRequest = new ApiRequest()
+            {
+                ApiType = SD.ApiType.POST,
+                Data = cartHeader,
+                Url = SD.ShoppingCartAPIBase + "/api/cart/Checkout",
+                AccessToken = token
+            };
+            return await this.SendAsync<T>(apiRequest);
+        }
+
         public async Task<T> ClearCartAsync<T>(string userId, string token = null)
         {
             var apiRequest = new ApiRequest()
