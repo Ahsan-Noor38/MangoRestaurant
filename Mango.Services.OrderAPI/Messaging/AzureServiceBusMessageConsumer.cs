@@ -15,8 +15,10 @@ namespace Mango.Services.OrderAPI.Messaging
     {
         private readonly string serviceBusConnectionString;
         private readonly string checkoutMessageTopic;
-        private readonly string subscriptionName;
+        private readonly string checkoutSubscription;
         private readonly OrderRepository _orderRepository;
+
+        private ServiceBusProcessor _serviceBusProcessor;
 
         private readonly IConfiguration _configuration;
 
@@ -27,7 +29,29 @@ namespace Mango.Services.OrderAPI.Messaging
 
             serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
             checkoutMessageTopic = _configuration.GetValue<string>("checkoutmessagetopic");
-            subscriptionName = _configuration.GetValue<string>("AhsanOrderSubscription");
+            checkoutSubscription = _configuration.GetValue<string>("CheckoutSubscription");
+
+            var client = new ServiceBusClient(serviceBusConnectionString);
+            _serviceBusProcessor = client.CreateProcessor(checkoutMessageTopic, checkoutSubscription);
+        }
+
+        public async Task Start()
+        {
+            _serviceBusProcessor.ProcessMessageAsync += OnCheckoutMessageReceived;
+            _serviceBusProcessor.ProcessErrorAsync += ErrorHandler;
+            await _serviceBusProcessor.StartProcessingAsync();
+        }
+
+        public async Task Stop()
+        {
+            await _serviceBusProcessor.StartProcessingAsync();
+            await _serviceBusProcessor.DisposeAsync();
+        }
+
+        private Task ErrorHandler(ProcessErrorEventArgs arg)
+        {
+            Console.WriteLine(arg.Exception.ToString());
+            return Task.CompletedTask;
         }
 
         private async Task OnCheckoutMessageReceived(ProcessMessageEventArgs args)
