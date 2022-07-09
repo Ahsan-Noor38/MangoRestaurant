@@ -85,6 +85,8 @@ namespace Mango.Services.ShoppingCartAPI.Repository
                     //update the count
                     cart.CartDetails.FirstOrDefault().Product = null;
                     cart.CartDetails.FirstOrDefault().Count += cartDetailsInDb.Count;
+                    cart.CartDetails.FirstOrDefault().CatDetailsId = cartDetailsInDb.CatDetailsId;
+                    cart.CartDetails.FirstOrDefault().CartHeaderId = cartDetailsInDb.CartHeaderId;
                     _dbContext.CartDetails.Update(cart.CartDetails.FirstOrDefault());
                     await _dbContext.SaveChangesAsync();
                 }
