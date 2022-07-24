@@ -71,6 +71,7 @@ namespace Mango.Services.PaymentAPI.Messaging
             {
                 PaymentStatus = result,
                 OrderId = paymentMessageRequest.OrderId,
+                Email = paymentMessageRequest.Email,
             };
 
             try
