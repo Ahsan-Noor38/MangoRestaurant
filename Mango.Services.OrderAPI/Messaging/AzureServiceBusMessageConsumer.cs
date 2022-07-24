@@ -1,4 +1,5 @@
 ﻿using Azure.Messaging.ServiceBus;
+using Mango.MessageBus;
 using Mango.Services.OrderAPI.Messages;
 using Mango.Services.OrderAPI.Models;
 using Mango.Services.OrderAPI.Repository;
@@ -21,8 +22,9 @@ namespace Mango.Services.OrderAPI.Messaging
         private ServiceBusProcessor _serviceBusProcessor;
 
         private readonly IConfiguration _configuration;
+        private readonly IMessageBus _messageBus;
 
-        public AzureServiceBusMessageConsumer(OrderRepository orderRepository, IConfiguration configuration)
+        public AzureServiceBusMessageConsumer(OrderRepository orderRepository, IConfiguration configuration, IMessageBus messageBus)
         {
             _orderRepository = orderRepository;
             _configuration = configuration;
@@ -33,6 +35,7 @@ namespace Mango.Services.OrderAPI.Messaging
 
             var client = new ServiceBusClient(serviceBusConnectionString);
             _serviceBusProcessor = client.CreateProcessor(checkoutMessageTopic, checkoutSubscription);
+            _messageBus = messageBus;
         }
 
         public async Task Start()
@@ -93,6 +96,26 @@ namespace Mango.Services.OrderAPI.Messaging
             }
 
             await _orderRepository.AddOrder(orderHeader);
+
+            PaymentRequestMessage paymentRequestMessage = new()
+            {
+                Name = orderHeader.FirstName + " " + orderHeader.LastName,
+                CardNumber = orderHeader.CardNumber,
+                CVV = orderHeader.CVV,
+                ExpiryMonthYear = orderHeader.ExpiryMonthYear,
+                OrderId = orderHeader.OrderHeaderId,
+                OrderTotal = orderHeader.OrderTotal,
+            };
+
+            try
+            {
+                await _messageBus.PublishMessage(paymentRequestMessage, "");
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
