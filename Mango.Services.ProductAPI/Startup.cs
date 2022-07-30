@@ -52,10 +52,11 @@ namespace Mango.Services.ProductAPI
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ApiScope", policy =>
+                options.AddPolicy("RequireAdministratorRole", policy =>
                 {
+                    policy.RequireRole("Admin");
+                    policy.RequireClaim("role", "Admin");
                     policy.RequireAuthenticatedUser();
-                    policy.RequireClaim("scope", "mango");
                 });
             });
 

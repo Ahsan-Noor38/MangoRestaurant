@@ -60,11 +60,11 @@ namespace Mango.Web
                 });
             services.AddAuthorization(a =>
             {
-                a.AddPolicy("Admin", s =>
+                a.AddPolicy("RequireAdministratorRole", policy =>
                 {
-                    s.RequireClaim("role", "Admin");
-                    s.RequireClaim("client_id", "mango");
-                    s.RequireAuthenticatedUser();
+                    policy.RequireRole("Admin");
+                    policy.RequireClaim("role", "Admin");
+                    policy.RequireAuthenticatedUser();
                 });
             });
         }

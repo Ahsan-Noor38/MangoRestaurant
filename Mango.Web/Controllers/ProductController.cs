@@ -79,7 +79,7 @@ namespace Mango.Web.Controllers
             return View(model);
         }
 
-        [Authorize("Admin")]
+        [Authorize(Policy = "RequireAdministratorRole")]
         public async Task<IActionResult> ProductDelete(int productId)
         {
             var accessToken = await HttpContext.GetTokenAsync("access_token");
@@ -93,7 +93,6 @@ namespace Mango.Web.Controllers
         }
 
         [HttpPost]
-        [Authorize("Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProductDelete(ProductDTO model)
         {
@@ -101,7 +100,7 @@ namespace Mango.Web.Controllers
             {
                 var accessToken = await HttpContext.GetTokenAsync("access_token");
                 var response = await _productService.DeleteProductAsync<ResponseDTO>(model.ProductId, accessToken);
-                if (response.IsSuccess)
+                if (response != null && response.IsSuccess)
                 {
                     return RedirectToAction(nameof(ProductIndex));
                 }
